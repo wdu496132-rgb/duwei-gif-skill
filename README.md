@@ -95,3 +95,15 @@ python scripts/showcase.py showcase.json output/showcase.mp4
 ## 许可
 
 代码和文档采用 [MIT 许可证](LICENSE)。仓库不附带示例角色素材。
+
+## 默认商品交付：独立 GIF + 2×4 / 3×3 MP4 + ZIP
+
+为小红书卖货，每次批量创作 GIF 时，默认**额外制作一个浅色实底、多宫格同屏播放的竖版 MP4**，而且 ZIP 同时包含全部独立 GIF 与展示 MP4。8 张对应 **2×4**，9 张对应 **3×3**，不复制角色来凑九格。视频默认 **1080×1920、9:16、60 FPS、H.264、8 秒**；独立 GIF 默认不加字，展示 MP4 可添加角色标签及定制引导。逐格按源 GIF 节奏循环。发布前检查流畅度、是否黑底、是否裁切及文件能否播放。64 帧若来自关键帧插值应核对重影，不宣称是 64 张原生绘画。
+
+对于 8 张 GIF，`showcase.json` 的 `items` 放 8 条；对于 9 张则放 9 条。运行：
+
+```bash
+python scripts/showcase.py showcase.json output/showcase.mp4
+```
+
+商品包应包含：每张独立 GIF、多宫格 MP4、简短使用说明。发布时优先用 MP4 吸引浏览，再根据客户需求单独发送 GIF。
