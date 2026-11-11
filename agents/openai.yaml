@@ -1,0 +1,4 @@
+interface:
+  display_name: "万能 GIF 工坊"
+  short_description: "输入角色、动漫或游戏名，制作八张 64 帧动作 GIF"
+  default_prompt: "用 $universal-gif-studio 为我指定的角色或作品制作八张 64 帧动作 GIF。"
