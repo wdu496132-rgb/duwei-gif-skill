@@ -34,8 +34,8 @@ def decode(path, background):
 def render(manifest, dest, regular_font, bold_font):
     config = json.loads(manifest.read_text(encoding="utf-8"))
     entries = config["items"]
-    if len(entries) != 9:
-        raise ValueError("A 3×3 showcase requires exactly nine GIFs")
+    if len(entries) not in (8, 9):
+        raise ValueError("Showcase requires eight (2×4) or nine (3×3) GIFs")
     duration = float(config.get("seconds", 8))
     if not 1 <= duration <= 60:
         raise ValueError("Set a video duration from 1 to 60 seconds")
@@ -45,15 +45,22 @@ def render(manifest, dest, regular_font, bold_font):
     draw = ImageDraw.Draw(base)
     draw.rounded_rectangle((485,210,595,219), radius=5, fill="#AA88CD")
     draw.text((540,294), config.get("title","角色 Q 版动图"), font=bold, fill="#302644", anchor="mm")
-    draw.text((540,385), config.get("subtitle","9 个角色的招牌动作"),
+    draw.text((540,385), config.get("subtitle",f"{len(entries)} 个角色的招牌动作"),
               font=regular, fill="#6B5C80", anchor="mm")
     tiles = []
     for index, (entry, color) in enumerate(zip(entries, COLORS)):
-        x, y = 64+(index%3)*326, 472+(index//3)*351
-        draw.rounded_rectangle((x,y,x+299,y+323), radius=30, fill=color)
-        draw.text((x+149,y+283), entry["name"], font=regular, fill="#524365", anchor="mm")
+        if len(entries) == 8:
+            x, y = 64+(index%2)*486, 450+(index//2)*345
+            tile_width = 452
+            image_x = x + (tile_width-273)//2
+        else:
+            x, y = 64+(index%3)*326, 472+(index//3)*351
+            tile_width = 299
+            image_x = x + 13
+        draw.rounded_rectangle((x,y,x+tile_width,y+323), radius=30, fill=color)
+        draw.text((x+tile_width//2,y+292), entry["name"], font=regular, fill="#524365", anchor="mm")
         images, ends = decode(manifest.parent / entry["gif"], color)
-        tiles.append(((x+13,y+1),images,ends))
+        tiles.append(((image_x,y+1),images,ends))
     dest.parent.mkdir(parents=True, exist_ok=True)
     draft = dest.with_name(f"{dest.stem}.partial.mp4")
     command = [
@@ -85,7 +92,7 @@ def render(manifest, dest, regular_font, bold_font):
 
 
 if __name__ == "__main__":
-    cli = argparse.ArgumentParser(description="Render nine character GIFs as an opaque 9:16 MP4.")
+    cli = argparse.ArgumentParser(description="Render eight or nine character GIFs as an opaque 9:16 MP4.")
     cli.add_argument("manifest", type=Path)
     cli.add_argument("output", type=Path)
     font_dir = "/usr/share/fonts/opentype/noto"
